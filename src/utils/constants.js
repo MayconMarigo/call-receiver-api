@@ -1,0 +1,18 @@
+
+//JWT
+const JWT_TOKEN_EXPIRY_TIME = 3600;
+
+// DATABASE
+const ACTIVE_USER_STATUS = 1
+
+//ERROR MESSAGES
+
+const ERROR_MESSAGES = {
+  UNAUTHORIZED: "Unauthorized."
+}
+
+module.exports = {
+  JWT_TOKEN_EXPIRY_TIME,
+  ACTIVE_USER_STATUS,
+  ERROR_MESSAGES
+};

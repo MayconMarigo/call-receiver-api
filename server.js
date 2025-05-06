@@ -1,9 +1,10 @@
+require('dotenv').config();
 const express = require("express");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
-const { routesProvider } = require("./routes");
 const { socketProvider } = require("./src/sockets/socket");
+const { routesProvider } = require("./src/routes/routes");
 
 const expressPort = 8080;
 const socketPort = 8081;
@@ -26,9 +27,9 @@ socketProvider(io);
 routesProvider(app);
 
 app.listen(expressPort, () => {
-  console.log(`Example app listening on port ${expressPort}`);
+  console.log(`HTTP server listening on port ${expressPort}`);
 });
 
 server.listen(socketPort, () => {
-  console.log(`Example socket listening on port ${socketPort}`);
+  console.log(`Socket server listening on port ${socketPort}`);
 });
