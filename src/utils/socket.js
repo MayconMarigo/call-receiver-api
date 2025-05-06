@@ -1,4 +1,4 @@
-const removeFirstAgentFromArray = (arr) => arr.shift();
+const removeFirstAgentFromQueue = (arr) => arr.shift();
 
 const removeAgentFromQueue = (agentId, arr) => arr.filter(value => value.id !== agentId && value.type !== "available") 
 
@@ -47,7 +47,7 @@ const handleSendRoomIdToSocket = (socket, roomId, destinyId) => {
 }
 
 module.exports = {
-  removeFirstAgentFromArray,
+  removeFirstAgentFromQueue,
   addAgentToEndOfQueueAndChangeStatus,
   filterAvailableAgents,
   handleCallAgentBySocketId,
