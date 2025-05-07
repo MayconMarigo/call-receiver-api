@@ -5,7 +5,14 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
         primaryKey: true
       },
-      type: DataTypes.STRING
+      type: {
+        type: DataTypes.STRING(10),
+        allowNull: false
+      },
+      value: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      }
     });
   
     UserType.associate = (models) => {

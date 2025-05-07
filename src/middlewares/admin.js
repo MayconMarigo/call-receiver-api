@@ -6,15 +6,20 @@ const isAdmin = async (req, res, next) => {
   try {
     const { authorization } = req.headers;
     const token = TokenService.extractTokenFromHeaders(authorization);
-    const data = TokenService.verifyEncodedToken(
+    const data = await TokenService.verifyEncodedToken(
       token,
       process.env.JWT_SECRET_KEY
     );
-
     const { email } = data;
     const userIsAdmin = await userQueries.findAdminUserByEmail(email);
 
-    if (!userIsAdmin) throw new Error(ERROR_MESSAGES.UNAUTHORIZED);
+    if (!userIsAdmin)
+      throw new Error(
+        JSON.stringify({
+          code: ERROR_MESSAGES.UNAUTHORIZED.CODE,
+          message: ERROR_MESSAGES.UNAUTHORIZED.MESSAGE,
+        })
+      );
 
     next();
   } catch (error) {
