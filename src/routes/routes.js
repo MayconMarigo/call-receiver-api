@@ -1,14 +1,14 @@
-const { userQueries } = require("../database/query/user");
 const { isAdmin } = require("../middlewares/admin");
-const { isAuthenticated } = require("../middlewares/authenticated");
+const { adminService } = require("../services/adminService");
 const { TokenService } = require("../services/tokenService");
 const { UserService } = require("../services/userService");
 const { CryptoUtils } = require("../utils/encryption");
+const { extractCodeAndMessageFromError } = require("../utils/error");
 const { ValidationUtils } = require("../utils/validations");
 
 exports.routesProvider = (app) => {
   // Rotas GET
-  app.get("/teste", (req, res) => {
+  app.get("/api/v1/teste", (req, res) => {
     const data = {
       em: CryptoUtils.encryptWithCypher("maycon.marigo@teste.com.br"),
       pw: CryptoUtils.encryptWithCypher("Teste@123"),
@@ -16,19 +16,29 @@ exports.routesProvider = (app) => {
     res.send(data);
   });
 
-  // Rotas POST
+  // ROTAS PUT
 
-  app.post("/generate-token", (req, res) => {
-    const body = CryptoUtils.retrieveValuesFromEncryptedBody(req.body);
-    // const data = await getUserByUserNameAndPassword(...body);
-    //data vem do banco
-    const data = {};
-    const token = TokenService.createEncodedToken(data);
-
-    return res.status(200).send({ token: token });
+  app.put("/api/v1/admin/user/update", isAdmin, async (req, res) => {
+    try {
+      const decodedBody = await CryptoUtils.retrieveValuesFromEncryptedBody(
+        req.body
+      );
+      ValidationUtils.checkTransformedValues(decodedBody);
+      // ValidationUtils.checkRequiredValues(
+      //   ["name", "email", "password", "phoneNumber", "userTypeId"],
+      //   Object.keys(decodedBody)
+      // );
+      const created = await adminService.createUser(decodedBody);
+      res.status(201).send({ created });
+    } catch (error) {
+      const { code, message } = extractCodeAndMessageFromError(error.message);
+      res.status(code).send(message);
+    }
   });
 
-  app.post("/verify-token", (req, res) => {
+  // Rotas POST
+
+  app.post("/api/v1/verify-token", (req, res) => {
     const { token } = req.body;
     try {
       const decodedToken = TokenService.verifyEncodedToken(token);
@@ -38,29 +48,52 @@ exports.routesProvider = (app) => {
     }
   });
 
-  app.post("/teste2", (req, res) => {
+  app.post("/api/v1/teste2", (req, res) => {
+    // const data = {
+    //   em: CryptoUtils.encryptWithCypher(req.body.email),
+    //   pw: CryptoUtils.encryptWithCypher(req.body.password),
+    //   stfa: CryptoUtils.encryptWithCypher(req.body.secret2fa),
+    //   c: CryptoUtils.encryptWithCypher(req.body.code),
+    // };
     const data = {
+      un: CryptoUtils.encryptWithCypher(req.body.name),
       em: CryptoUtils.encryptWithCypher(req.body.email),
       pw: CryptoUtils.encryptWithCypher(req.body.password),
+      pn: CryptoUtils.encryptWithCypher(req.body.phoneNumber),
+      uti: CryptoUtils.encryptWithCypher(req.body.userTypeId),
     };
 
     res.status(200).send(data);
   });
 
-  app.post("/admin/register", isAdmin, (req, res) => {
-    res.status(201).send();
+  app.post("/api/v1/admin/user/register", isAdmin, async (req, res) => {
+    try {
+      const decodedBody = await CryptoUtils.retrieveValuesFromEncryptedBody(
+        req.body
+      );
+      ValidationUtils.checkTransformedValues(decodedBody);
+      ValidationUtils.checkRequiredValues(
+        ["name", "email", "password", "phoneNumber", "userTypeId"],
+        Object.keys(decodedBody)
+      );
+      const created = await adminService.createUser(decodedBody);
+      res.status(201).send({ created });
+    } catch (error) {
+      const { code, message } = extractCodeAndMessageFromError(error.message);
+      res.status(code).send(message);
+    }
   });
 
-  app.post("/auth", async (req, res) => {
+  app.post("/api/v1/auth", async (req, res) => {
     try {
-      const decodedBody = CryptoUtils.retrieveValuesFromEncryptedBody(req.body);
-
+      const decodedBody = await CryptoUtils.retrieveValuesFromEncryptedBody(
+        req.body
+      );
       ValidationUtils.checkRequiredValues(
         ["email", "password"],
         Object.keys(decodedBody)
       );
-
-      const user = await UserService.login(
+      const user = await UserService.getUserByEmailAndPassword(
         decodedBody.email,
         decodedBody.password
       );
@@ -68,26 +101,53 @@ exports.routesProvider = (app) => {
 
       return res.status(200).send({ token: token });
     } catch (error) {
-      console.log(error);
-      return res.status(412).send({ message: error.message });
+      const { code, message } = extractCodeAndMessageFromError(error.message);
+      res.status(code).send(message);
     }
   });
 
-  app.post("/login", async (req, res) => {
+  app.post("/api/v1/login", async (req, res) => {
     try {
-      const { token, tfa } = req.body;
-
-      ValidationUtils.checkRequiredValues(
-        ["token", "tfa"],
-        Object.keys(req.body)
+      const decodedBody = await CryptoUtils.retrieveValuesFromEncryptedBody(
+        req.body
       );
 
-     
+      ValidationUtils.checkRequiredValues(["token"], Object.keys(decodedBody));
 
-      return res.status(200).send({ token: token });
+      const { token } = decodedBody;
+
+      const user = await TokenService.verifyEncodedToken(token);
+
+      const otpAuthUrl = await UserService.generateOTPAuthUrl(user.secret2fa);
+      const qrcodeData = await UserService.generateTotpQrCode(otpAuthUrl);
+
+      return res
+        .status(200)
+        .send({ secret: user.secret2fa, qrCode: qrcodeData });
     } catch (error) {
-      console.log(error);
-      return res.status(412).send({ message: error.message });
+      const { code, message } = extractCodeAndMessageFromError(error.message);
+      res.status(code).send(message);
+    }
+  });
+
+  app.post("/api/v1/verify-2fa", async (req, res) => {
+    try {
+      const decodedBody = await CryptoUtils.retrieveValuesFromEncryptedBody(
+        req.body
+      );
+      const { code, secret2fa } = decodedBody;
+
+      ValidationUtils.checkRequiredValues(
+        ["code", "secret2fa"],
+        Object.keys(decodedBody)
+      );
+
+      await UserService.verifyTwoFactorAuthenticationCode(secret2fa, code);
+
+      return res.status(200).send({ success: true });
+    } catch (error) {
+      const { code, message } = extractCodeAndMessageFromError(error.message);
+      res.status(code).send(message);
     }
   });
 };

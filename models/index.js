@@ -14,20 +14,20 @@ const sequelize = new Sequelize(
 
 const User = require("./User")(sequelize, DataTypes);
 const UserType = require("./UserType")(sequelize, DataTypes);
-const Company = require("./Company")(sequelize, DataTypes);
 const Credential = require("./Credential")(sequelize, DataTypes);
-const Log = require("./Logs")(sequelize, DataTypes);
+const Call = require("./Call")(sequelize, DataTypes);
 const Agenda = require("./Agenda")(sequelize, DataTypes);
+const Rating = require("./Rating")(sequelize, DataTypes);
 
 const db = {
   sequelize,
   Sequelize,
   User,
   UserType,
-  Company,
   Credential,
-  Log,
+  Call,
   Agenda,
+  Rating
 };
 
 Object.values(db).forEach((model) => {

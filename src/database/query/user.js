@@ -23,6 +23,7 @@ const findAdminUserByEmail = async (email) => {
 const findUserByEmailAndPassword = async (email, password) => {
   const data = await User.findOne({
     where: { email, password, status: 1 },
+    attributes: ["id", "name", "email", "secret2fa"]
   });
 
   if (!data) return null;
