@@ -9,7 +9,7 @@
     "migration:rollback": "npx sequelize-cli db:migrate:undo",
     "seed": "npx sequelize-cli db:seed --seed",
     "seed:generate": "npx sequelize-cli seed:generate --name",
-    "populate:db": "npm run seed 20250505223211-create-user-types && npm run seed 20250506172553-bulk-add-users",
+    "populate:db": "npm run seed 20250505223211-create-user-types && npm run seed 20250506172553-bulk-add-users && npm run seed 20250510032130-bulk-add-calls && npm run seed 20250510032130-bulk-add-calls",
     "sync": "node ./src/database/sync.js"
   },
   "repository": {
@@ -24,6 +24,7 @@
   "homepage": "https://github.com/MayconMarigo/call-receiver-api#readme",
   "description": "",
   "dependencies": {
+    "@sequelize/core": "^7.0.0-alpha.46",
     "base-32": "^0.0.3",
     "bcrypt": "^5.1.1",
     "body-parser": "^2.2.0",

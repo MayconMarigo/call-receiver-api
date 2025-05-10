@@ -6,11 +6,19 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true,
       allowNull: false
     },
+    rating: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
+    callId: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    }
   });
 
-  Ratings.associate = (models) => {
-    Ratings.belongsTo(models.Call, { foreignKey: "callId" });
-  };
+  // Ratings.associate = (models) => {
+  //   Ratings.belongsTo(models.Call, { foreignKey: "callId" });
+  // };
 
   return Ratings;
 };

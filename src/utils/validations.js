@@ -8,7 +8,9 @@ const checkRequiredValues = (arrayOfRequiredValues, validationArray) => {
 
   arrayOfRequiredValues.forEach((value) => {
     if (validationArray.findIndex((required) => required == value) == -1) {
-      throw new Error(`${value} is required.`);
+      throw new Error(
+        JSON.stringify({ code: 412, message: `${value} is required.` })
+      );
     }
   });
 };
@@ -23,12 +25,7 @@ const checkTransformedValues = (transformedValues) => {
   });
 
   if (error)
-    throw new Error(
-      JSON.stringify({
-        code: ERROR_MESSAGES.MALFORMATTED_FIELDS.CODE,
-        message: ERROR_MESSAGES.MALFORMATTED_FIELDS.MESSAGE,
-      })
-    );
+    throw new Error(JSON.stringify(ERROR_MESSAGES.MALFORMATTED_FIELDS));
 
   return;
 };

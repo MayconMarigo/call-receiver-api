@@ -1,4 +1,5 @@
-require('dotenv').config();
+require("dotenv").config();
+require("./src/database/database");
 const express = require("express");
 const { createServer } = require("http");
 const { Server } = require("socket.io");

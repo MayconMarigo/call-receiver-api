@@ -55,7 +55,7 @@ const retrieveValuesFromEncryptedBody = async (body) => {
     {
       key: "pn",
       transformedValue: decryptWithCypher(body?.pn),
-      name: "phoneNumber",
+      name: "phone",
     },
     {
       key: "stfa",
@@ -64,7 +64,61 @@ const retrieveValuesFromEncryptedBody = async (body) => {
     },
     { key: "t", transformedValue: body?.t, name: "token" },
     { key: "c", transformedValue: decryptWithCypher(body?.c), name: "code" },
-    { key: "uti", transformedValue: decryptWithCypher(body?.uti), name: "userTypeId" },
+    {
+      key: "uti",
+      transformedValue: decryptWithCypher(body?.uti),
+      name: "userTypeId",
+    },
+    {
+      key: "cid",
+      transformedValue: decryptWithCypher(body?.cid),
+      name: "callId",
+    },
+    {
+      key: "clrid",
+      transformedValue: decryptWithCypher(body?.clrid),
+      name: "callerId",
+    },
+    {
+      key: "rcvrid",
+      transformedValue: decryptWithCypher(body?.rcvrid),
+      name: "receiverId",
+    },
+    {
+      key: "cnnd",
+      transformedValue: decryptWithCypher(body?.cnnd),
+      name: "connected",
+    },
+    {
+      key: "sttm",
+      transformedValue: new Date(decryptWithCypher(body?.sttm)),
+      name: "startTime",
+    },
+    {
+      key: "stdt",
+      transformedValue: decryptWithCypher(body?.stdt),
+      name: "startDate",
+    },
+    {
+      key: "eddt",
+      transformedValue: decryptWithCypher(body?.eddt),
+      name: "endDate",
+    },
+    {
+      key: "rt",
+      transformedValue: decryptWithCypher(body?.rt),
+      name: "rating",
+    },
+    {
+      key: "uid",
+      transformedValue: decryptWithCypher(body?.uid),
+      name: "userId",
+    },
+    {
+      key: "sts",
+      transformedValue: decryptWithCypher(body?.sts),
+      name: "status",
+    },
   ];
 
   const decryptedBody = {};
@@ -77,14 +131,26 @@ const retrieveValuesFromEncryptedBody = async (body) => {
     });
   });
 
+  if (encryptedBody.findIndex((value) => value == "pw") !== -1) {
+    decryptedBody.encryptedPassword = body?.pw;
+  }
+
   return decryptedBody;
 };
 
 const convertToDatabaseFormatedPassword = async (password) => {
-  if(!password) return;
+  if (!password) return;
   const hash = bcrypt.hash(password, process.env.BCRYPT_SALT_KEY);
 
   return hash;
+};
+
+const comparehashedPasswords = async (password, hashedPassword) => {
+  if (!password) return false;
+
+  const compare = bcrypt.compare(password, hashedPassword);
+
+  return compare;
 };
 
 const generateBase32Hash = () => {
@@ -104,11 +170,35 @@ const generateTotpConstructorWithSecret = (base32_secret) =>
     secret: base32_secret,
   });
 
+const retrieveValuesFromEncryptedParams = async (params) => {
+  const encryptionDictionary = [
+    // {
+    //   key: "uid",
+    //   transformedValue: decryptWithCypher(params?.uid),
+    //   name: "userId",
+    // },
+  ];
+
+  const decryptedParams = {};
+  const encryptedParams = Object.keys(params);
+
+  encryptionDictionary.forEach(() => {
+    encryptedParams.forEach((key) => {
+      const match = encryptionDictionary.find((value) => value.key == key);
+      decryptedParams[match.name] = match.transformedValue;
+    });
+  });
+
+  return decryptedBody;
+};
+
 exports.CryptoUtils = {
   encryptWithCypher,
   decryptWithCypher,
   retrieveValuesFromEncryptedBody,
   convertToDatabaseFormatedPassword,
+  comparehashedPasswords,
   generateBase32Hash,
   generateTotpConstructorWithSecret,
+  retrieveValuesFromEncryptedParams,
 };

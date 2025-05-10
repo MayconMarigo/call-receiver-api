@@ -12,7 +12,6 @@ module.exports = (sequelize, DataTypes) => {
     },
     videoUrl: {
       type: DataTypes.STRING,
-      allowNull: false,
       unique: true,
     },
     connected: {
@@ -20,11 +19,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     startTime: {
-      type: DataTypes.DATE,
+      type: "TIMESTAMP",
       allowNull: false,
     },
     endTime: {
-      type: DataTypes.DATE,
+      type: "TIMESTAMP",
       allowNull: false,
     },
   });
