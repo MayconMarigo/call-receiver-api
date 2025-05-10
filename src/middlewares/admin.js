@@ -1,6 +1,8 @@
 const { userQueries } = require("../database/query/user");
 const { TokenService } = require("../services/tokenService");
 const { ERROR_MESSAGES } = require("../utils/constants");
+const { CryptoUtils } = require("../utils/encryption");
+const { extractCodeAndMessageFromError } = require("../utils/error");
 
 const isAdmin = async (req, res, next) => {
   try {
@@ -10,21 +12,32 @@ const isAdmin = async (req, res, next) => {
       token,
       process.env.JWT_SECRET_KEY
     );
-    const { email } = data;
-    const userIsAdmin = await userQueries.findAdminUserByEmail(email);
+
+    const { id, email, encryptedPassword } = data;
+    const hashedPassword = await userQueries.findUserById(id);
+    const decryptedPassword = CryptoUtils.decryptWithCypher(encryptedPassword);
+
+    const arePasswordsEqual = await CryptoUtils.comparehashedPasswords(
+      decryptedPassword,
+      hashedPassword
+    );
+
+    if (!arePasswordsEqual) {
+      throw new Error(JSON.stringify(ERROR_MESSAGES.CREDENTIALS_CHANGED));
+    }
+
+    const userIsAdmin = await userQueries.findAdminUserByEmail(
+      email,
+      encryptedPassword
+    );
 
     if (!userIsAdmin)
-      throw new Error(
-        JSON.stringify({
-          code: ERROR_MESSAGES.UNAUTHORIZED.CODE,
-          message: ERROR_MESSAGES.UNAUTHORIZED.MESSAGE,
-        })
-      );
+      throw new Error(JSON.stringify(ERROR_MESSAGES.UNAUTHORIZED));
 
     next();
   } catch (error) {
-    console.log(error);
-    return res.status(401).send(error.message);
+    const { code, message } = extractCodeAndMessageFromError(error.message);
+    res.status(code).send(message);
   }
 };
 

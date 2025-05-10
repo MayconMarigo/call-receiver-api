@@ -6,13 +6,7 @@ const { CryptoUtils } = require("../utils/encryption");
 const getUserByEmailAndPassword = async (email, password) => {
   const user = await userQueries.findUserByEmailAndPassword(email, password);
 
-  if (!user)
-    throw new Error(
-      JSON.stringify({
-        code: ERROR_MESSAGES.USER.NOT_FOUND.CODE,
-        message: ERROR_MESSAGES.USER.NOT_FOUND.MESSAGE,
-      })
-    );
+  if (!user) throw new Error(JSON.stringify(ERROR_MESSAGES.USER.NOT_FOUND));
 
   return user;
 };
@@ -20,7 +14,7 @@ const getUserByEmailAndPassword = async (email, password) => {
 const generateOTPAuthUrl = async (base32_secret) => {
   const totp = CryptoUtils.generateTotpConstructorWithSecret(base32_secret);
 
-  if (!totp) throw new Error(JSON.stringify({code: ERROR_MESSAGES.TOTP.AUTH_URL.CODE, message: ERROR_MESSAGES.TOTP.AUTH_URL.MESSAGe}));
+  if (!totp) throw new Error(JSON.stringify(ERROR_MESSAGES.TOTP.AUTH_URL));
 
   return totp.toString();
 };

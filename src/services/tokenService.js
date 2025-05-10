@@ -5,12 +5,7 @@ const verifyEncodedToken = async (token) => {
   const verified = verifyTokenJwt(token);
 
   if (!verified)
-    throw new Error(
-      JSON.stringify({
-        code: ERROR_MESSAGES.TOKEN.INVALID_TOKEN.CODE,
-        message: ERROR_MESSAGES.TOKEN.INVALID_TOKEN.MESSAGE,
-      })
-    );
+    throw new Error(JSON.stringify(ERROR_MESSAGES.TOKEN.INVALID_TOKEN));
 
   return verified;
 };

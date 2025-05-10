@@ -1,10 +1,11 @@
 const { User, UserType } = require("../../../models");
-const { ACTIVE_USER_STATUS } = require("../../utils/constants");
-const { pool, sequelize } = require("../database");
 
 const findAdminUserByEmail = async (email) => {
   const data = await User.findOne({
-    where: { email, status: 1 },
+    where: {
+      email,
+      status: 1,
+    },
     include: {
       model: UserType,
       required: true,
@@ -23,7 +24,7 @@ const findAdminUserByEmail = async (email) => {
 const findUserByEmailAndPassword = async (email, password) => {
   const data = await User.findOne({
     where: { email, password, status: 1 },
-    attributes: ["id", "name", "email", "secret2fa"]
+    attributes: ["id", "name", "email", "secret2fa"],
   });
 
   if (!data) return null;
@@ -33,7 +34,22 @@ const findUserByEmailAndPassword = async (email, password) => {
   return dataValues;
 };
 
+const findUserById = async (userId) => {
+  console.log(userId);
+  const data = await User.findOne({
+    where: { id: userId },
+    attributes: ["password"],
+  });
+
+  if (!data) return null;
+
+  const { password } = data?.dataValues;
+
+  return password;
+};
+
 exports.userQueries = {
   findAdminUserByEmail,
   findUserByEmailAndPassword,
+  findUserById,
 };

@@ -1,16 +1,35 @@
+const { userQueries } = require("../database/query/user");
 const { TokenService } = require("../services/tokenService");
+const { ERROR_MESSAGES } = require("../utils/constants");
+const { CryptoUtils } = require("../utils/encryption");
+const { extractCodeAndMessageFromError } = require("../utils/error");
 
-const isAuthenticated = (req, res, next) => {
+const isAuthenticated = async (req, res, next) => {
   try {
     const { authorization } = req.headers;
-    const token = TokenService.extractTokenFromHeaders(authorization)
-    TokenService.verifyEncodedToken(token, process.env.JWT_SECRET_KEY);
+    const token = TokenService.extractTokenFromHeaders(authorization);
+    const data = await TokenService.verifyEncodedToken(
+      token,
+      process.env.JWT_SECRET_KEY
+    );
 
+    const { id, encryptedPassword } = data;
+    const hashedPassword = await userQueries.findUserById(id);
+    const decryptedPassword = CryptoUtils.decryptWithCypher(encryptedPassword);
+
+    const arePasswordsEqual = await CryptoUtils.comparehashedPasswords(
+      decryptedPassword,
+      hashedPassword
+    );
+
+    if (!arePasswordsEqual)
+      throw new Error(JSON.stringify(ERROR_MESSAGES.UNAUTHORIZED));
+
+    next();
   } catch (error) {
-    return res.status(401).send("Unauthorized.");
+    const { code, message } = extractCodeAndMessageFromError(error.message);
+    res.status(code).send(message);
   }
-
-  next();
 };
 
 module.exports = {
