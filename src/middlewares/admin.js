@@ -8,10 +8,7 @@ const isAdmin = async (req, res, next) => {
   try {
     const { authorization } = req.headers;
     const token = TokenService.extractTokenFromHeaders(authorization);
-    const data = await TokenService.verifyEncodedToken(
-      token,
-      process.env.JWT_SECRET_KEY
-    );
+    const data = await TokenService.verifyEncodedToken(token);
 
     const { id, email, encryptedPassword } = data;
     const hashedPassword = await userQueries.findUserById(id);
@@ -37,7 +34,7 @@ const isAdmin = async (req, res, next) => {
     next();
   } catch (error) {
     const { code, message } = extractCodeAndMessageFromError(error.message);
-    res.status(code).send(message);
+    res.status(code).send({ message });
   }
 };
 

@@ -1,6 +1,7 @@
 const { isAdmin } = require("../middlewares/admin");
 const { isAuthenticated } = require("../middlewares/authenticated");
 const { adminService } = require("../services/adminService");
+const { agendaService } = require("../services/agendaService");
 const { CallService } = require("../services/callService");
 const { RatingService } = require("../services/ratingService");
 const { TokenService } = require("../services/tokenService");
@@ -21,6 +22,8 @@ exports.routesProvider = (app) => {
         [...Object.keys(req.params), ...Object.keys(req.query)]
       );
 
+      ValidationUtils.checkTransformedValues({ ...req.query, ...req.params });
+
       const { startDate, endDate, type } = req.query;
       const { userId } = req.params;
 
@@ -33,9 +36,8 @@ exports.routesProvider = (app) => {
 
       res.status(200).send(reports);
     } catch (error) {
-      console.log(error);
       const { code, message } = extractCodeAndMessageFromError(error.message);
-      res.status(code).send(message);
+      res.status(code).send({ message });
     }
   });
 
@@ -66,31 +68,32 @@ exports.routesProvider = (app) => {
 
   // Rotas POST
 
-  app.post("/api/v1/verify-token", (req, res) => {
-    const { token } = req.body;
+  app.post("/api/v1/verify-token", async (req, res) => {
     try {
-      const decodedToken = TokenService.verifyEncodedToken(token);
-      res.status(200).send(decodedToken);
+      const decodedBody = await CryptoUtils.retrieveValuesFromEncryptedBody(
+        req.body
+      );
+
+      ValidationUtils.checkRequiredValues(["token"], Object.keys(decodedBody));
+      ValidationUtils.checkTransformedValues(decodedBody);
+
+      const { token } = decodedBody;
+
+      const decodedUser = await TokenService.verifyEncodedToken(token, [
+        "type",
+        "id",
+      ]);
+
+      res.status(200).send(decodedUser);
     } catch (error) {
-      res.status(422).send({ message: error.message });
+      const { code, message } = extractCodeAndMessageFromError(error.message);
+      const formattedErrorMessage = formatErrorFieldsMessageFromDatabase(error);
+
+      res.status(code).send(`${message} ${formattedErrorMessage}`);
     }
   });
 
-  app.post("/api/v1/teste2", (req, res) => {
-    // const data = {
-    //   em: CryptoUtils.encryptWithCypher(req.body.email),
-    //   pw: CryptoUtils.encryptWithCypher(req.body.password),
-    //   stfa: CryptoUtils.encryptWithCypher(req.body.secret2fa),
-    //   c: CryptoUtils.encryptWithCypher(req.body.code),
-    // };
-    // const data = {
-    //   un: CryptoUtils.encryptWithCypher(req.body.name),
-    //   em: CryptoUtils.encryptWithCypher(req.body.email),
-    //   pw: CryptoUtils.encryptWithCypher(req.body.password),
-    //   pn: CryptoUtils.encryptWithCypher(req.body.phoneNumber),
-    //   uti: CryptoUtils.encryptWithCypher(req.body.userTypeId),
-    // };
-
+  app.post("/api/v1/teste2", async (req, res) => {
     const data = {
       uid: CryptoUtils.encryptWithCypher(
         "7f7418be-6ce1-49ab-8caf-e0096b9a04b6"
@@ -124,7 +127,7 @@ exports.routesProvider = (app) => {
       res.status(200).send(reports);
     } catch (error) {
       const { code, message } = extractCodeAndMessageFromError(error.message);
-      res.status(code).send(message);
+      res.status(code).send({ message });
     }
   });
 
@@ -144,7 +147,7 @@ exports.routesProvider = (app) => {
       res.status(201).send({ created });
     } catch (error) {
       const { code, message } = extractCodeAndMessageFromError(error.message);
-      res.status(code).send(message);
+      res.status(code).send({ message });
     }
   });
 
@@ -167,7 +170,7 @@ exports.routesProvider = (app) => {
       res.status(201).send({ created });
     } catch (error) {
       const { code, message } = extractCodeAndMessageFromError(error.message);
-      res.status(code).send(message);
+      res.status(code).send({ message });
     }
   });
 
@@ -205,7 +208,7 @@ exports.routesProvider = (app) => {
       res.status(201).send({ created });
     } catch (error) {
       const { code, message } = extractCodeAndMessageFromError(error.message);
-      res.status(code).send(message);
+      res.status(code).send({ message });
     }
   });
 
@@ -223,12 +226,16 @@ exports.routesProvider = (app) => {
       const { email, password, encryptedPassword } = decodedBody;
 
       const user = await UserService.getUserByEmailAndPassword(email, password);
-      const token = TokenService.createEncodedToken({...user, encryptedPassword});
+      const token = TokenService.createEncodedToken({
+        ...user,
+        encryptedPassword,
+      });
 
       return res.status(200).send({ token: token });
     } catch (error) {
       const { code, message } = extractCodeAndMessageFromError(error.message);
-      res.status(code).send(message);
+
+      res.status(code).send({ message });
     }
   });
 
@@ -253,11 +260,34 @@ exports.routesProvider = (app) => {
         .send({ secret: user.secret2fa, qrCode: qrcodeData });
     } catch (error) {
       const { code, message } = extractCodeAndMessageFromError(error.message);
-      res.status(code).send(message);
+      res.status(code).send({ message });
     }
   });
 
-  app.post("/api/v1/verify-2fa", async (req, res) => {
+  app.post("/api/v1/user-data", isAuthenticated, async (req, res) => {
+    console.log(req.body)
+    try {
+      const decodedBody = await CryptoUtils.retrieveValuesFromEncryptedBody(
+        req.body
+      );
+
+      ValidationUtils.checkRequiredValues(["token"], Object.keys(decodedBody));
+      ValidationUtils.checkTransformedValues(decodedBody);
+
+      const { token } = decodedBody;
+
+      const data = await UserService.getUserDataByToken(token);
+
+      return res.status(200).send(data);
+    } catch (error) {
+      const { code, message } = extractCodeAndMessageFromError(error.message);
+      const formattedErrorMessage = formatErrorFieldsMessageFromDatabase(error);
+
+      res.status(code).send({ message: `${message} ${formattedErrorMessage}` });
+    }
+  });
+
+  app.post("/api/v1/verify-2fa", isAuthenticated, async (req, res) => {
     try {
       const decodedBody = await CryptoUtils.retrieveValuesFromEncryptedBody(
         req.body
@@ -275,7 +305,58 @@ exports.routesProvider = (app) => {
       return res.status(200).send({ success: true });
     } catch (error) {
       const { code, message } = extractCodeAndMessageFromError(error.message);
-      res.status(code).send(message);
+      const formattedErrorMessage = formatErrorFieldsMessageFromDatabase(error);
+
+      res.status(code).send({ message: `${message} ${formattedErrorMessage}` });
+    }
+  });
+
+  app.post("/api/v1/agenda/create", isAuthenticated, async (req, res) => {
+    try {
+      const decodedBody = await CryptoUtils.retrieveValuesFromEncryptedBody(
+        req.body
+      );
+      const { callId, callerId, receiverId, videoUrl, scheduledDateTime } =
+        decodedBody;
+
+      ValidationUtils.checkRequiredValues(
+        ["callId", "callerId", "receiverId", "videoUrl", "scheduledDateTime"],
+        Object.keys(decodedBody)
+      );
+      ValidationUtils.checkTransformedValues(decodedBody);
+
+      await agendaService.createAgenda(
+        callId,
+        callerId,
+        receiverId,
+        videoUrl,
+        scheduledDateTime
+      );
+
+      res.status(204).send();
+    } catch (error) {
+      const { code, message } = extractCodeAndMessageFromError(error.message);
+      res.status(code).send({ message });
+    }
+  });
+
+  app.post("/api/v1/agenda/:userId", isAuthenticated, async (req, res) => {
+    try {
+      const { startDate, endDate } = req.query;
+      const { userId } = req.params;
+
+      ValidationUtils.checkRequiredValues(
+        ["userId", "startDate", "endDate", "videoUrl", "scheduledDateTime"],
+        [...Object.keys(req.params), ...Object.keys(req.query)]
+      );
+      ValidationUtils.checkTransformedValues({ ...req.query, ...req.params });
+
+      await agendaService.findAgendaByUserId(userId, startDate, endDate);
+
+      res.status(204).send();
+    } catch (error) {
+      const { code, message } = extractCodeAndMessageFromError(error.message);
+      res.status(code).send({ message });
     }
   });
 };

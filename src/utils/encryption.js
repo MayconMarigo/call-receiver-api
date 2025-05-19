@@ -163,7 +163,7 @@ const generateBase32Hash = () => {
 const generateTotpConstructorWithSecret = (base32_secret) =>
   new OTPAuth.TOTP({
     issuer: TOTP.AUTHENTICATOR_NAME,
-    label: "2fa",
+    label: "Autenticador em duas etapas",
     algorithm: "SHA1",
     period: TOTP.AUTHENTICATOR_TIMEOUT,
     digits: 6,

@@ -6,6 +6,7 @@ const { Server } = require("socket.io");
 const cors = require("cors");
 const { socketProvider } = require("./src/sockets/socket");
 const { routesProvider } = require("./src/routes/routes");
+const morgan = require("morgan")
 
 const expressPort = 8080;
 const socketPort = 8081;
@@ -23,6 +24,7 @@ let corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(morgan('dev'));
 
 socketProvider(io);
 routesProvider(app);
