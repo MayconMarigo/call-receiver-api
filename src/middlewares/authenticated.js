@@ -8,10 +8,10 @@ const isAuthenticated = async (req, res, next) => {
   try {
     const { authorization } = req.headers;
     const token = TokenService.extractTokenFromHeaders(authorization);
-    const data = await TokenService.verifyEncodedToken(
-      token,
-      process.env.JWT_SECRET_KEY
-    );
+
+    if (!token) throw new Error(JSON.stringify(ERROR_MESSAGES.UNAUTHORIZED));
+
+    const data = await TokenService.verifyEncodedToken(token);
 
     const { id, encryptedPassword } = data;
     const hashedPassword = await userQueries.findUserById(id);
@@ -28,7 +28,7 @@ const isAuthenticated = async (req, res, next) => {
     next();
   } catch (error) {
     const { code, message } = extractCodeAndMessageFromError(error.message);
-    res.status(code).send(message);
+    res.status(code).send({ message });
   }
 };
 

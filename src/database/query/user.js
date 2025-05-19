@@ -1,4 +1,5 @@
 const { User, UserType } = require("../../../models");
+const { userUtils } = require("../../utils/user");
 
 const findAdminUserByEmail = async (email) => {
   const data = await User.findOne({
@@ -24,20 +25,25 @@ const findAdminUserByEmail = async (email) => {
 const findUserByEmailAndPassword = async (email, password) => {
   const data = await User.findOne({
     where: { email, password, status: 1 },
-    attributes: ["id", "name", "email", "secret2fa"],
+    attributes: ["id", "name", "email", "secret2fa", "userTypeId"],
   });
 
   if (!data) return null;
 
   const { dataValues } = data;
 
-  return dataValues;
+  const user = {
+    ...dataValues,
+    type: userUtils.checkUserType(dataValues.userTypeId),
+  };
+  delete user.userTypeId;
+
+  return user;
 };
 
 const findUserById = async (userId) => {
-  console.log(userId);
   const data = await User.findOne({
-    where: { id: userId },
+    where: { id: userId, status: 1 },
     attributes: ["password"],
   });
 
@@ -48,8 +54,32 @@ const findUserById = async (userId) => {
   return password;
 };
 
+const getUserDataById = async (userId) => {
+  const data = await User.findOne({
+    where: { id: userId, status: 1 },
+    attributes: ["name", "email", "phone", "logoImage", "colorScheme"],
+    include: {
+      model: UserType,
+      required: true,
+      attributes: ["type"],
+    },
+  });
+
+  if (!data) return null;
+
+  const { type } = data?.user_type;
+
+  const { dataValues } = data;
+
+  dataValues.type = type;
+  delete dataValues.user_type;
+
+  return dataValues;
+};
+
 exports.userQueries = {
   findAdminUserByEmail,
   findUserByEmailAndPassword,
   findUserById,
+  getUserDataById,
 };

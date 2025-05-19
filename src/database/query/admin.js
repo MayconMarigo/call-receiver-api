@@ -3,7 +3,6 @@ const Crypto = require("crypto");
 const { CryptoUtils } = require("../../utils/encryption");
 const { Op } = require("@sequelize/core");
 const { literal } = require("sequelize");
-const { dateUtils } = require("../../utils/date");
 
 const createUser = async (payload) => {
   const { name, email, phone, password, userTypeId } = payload;
@@ -40,10 +39,6 @@ const updateUserByUserId = async (payload) => {
     colorScheme,
   } = payload;
 
-  const mountUpdatedPayloadWithoutNullables = () => {};
-
-  // $2b$10$k4gFmLS2kYfYhEF46qQnFurvizqWEQOs6IgXn5j4c7sT.BFVcN90m
-
   const updated = await User.update(
     {
       name,
@@ -59,8 +54,6 @@ const updateUserByUserId = async (payload) => {
       where: { id: userId },
     }
   );
-
-  console.log(updated);
 
   return updated;
 };
@@ -112,6 +105,7 @@ const findAllCallsByUserIdAndType = async (
       "endTime",
       "callId",
       "callerId",
+      "videoUrl",
       [
         literal("TIMESTAMPDIFF(MINUTE, startTime, endTime)"),
         "durationInMinutes",
