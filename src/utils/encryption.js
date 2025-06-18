@@ -22,6 +22,14 @@ const retrieveValuesFromEncryptedBody = async (body) => {
     decryptWithCypher(body?.pw)
   );
 
+  let base64Data;
+  let buffer;
+
+  if (body.fl) {
+    base64Data = body.fl.replace(/^data:image\/\w+;base64,/, "");
+    buffer = Buffer.from(base64Data, "base64");
+  }
+
   const encryptionDictionary = [
     {
       key: "nm",
@@ -118,6 +126,21 @@ const retrieveValuesFromEncryptedBody = async (body) => {
       key: "sts",
       transformedValue: decryptWithCypher(body?.sts),
       name: "status",
+    },
+    {
+      key: "cl",
+      transformedValue: body?.cl,
+      name: "color",
+    },
+    {
+      key: "fl",
+      transformedValue: buffer,
+      name: "logoImage",
+    },
+    {
+      key: "ia",
+      transformedValue: decryptWithCypher(body?.ia),
+      name: "isAnonymous",
     },
   ];
 

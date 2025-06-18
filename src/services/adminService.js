@@ -10,8 +10,8 @@ const createUser = async (payload) => {
   return isNewUser;
 };
 
-const findAllCalls = async (startDate, endDate) => {
-  const reports = await adminQueries.findAllCalls(startDate, endDate);
+const getAllCalls = async (startDate, endDate) => {
+  const reports = await adminQueries.getAllCalls(startDate, endDate);
 
   return reports;
 };
@@ -32,15 +32,22 @@ const findAllCallsByUserIdAndType = async (
   return reports;
 };
 
-const updateUserByUserId = async (payload) => {
-  const updated = await adminQueries.updateUserByUserId(payload);
+const updateUserByUserEmail = async (payload) => {
+  const updated = await adminQueries.updateUserByUserEmail(payload);
 
   return updated;
 };
 
+const getAllUsers = async () => {
+  const users = await adminQueries.getAllUsers();
+
+  return users;
+};
+
 exports.adminService = {
   createUser,
-  updateUserByUserId,
-  findAllCalls,
+  updateUserByUserEmail,
+  getAllCalls,
   findAllCallsByUserIdAndType,
+  getAllUsers,
 };

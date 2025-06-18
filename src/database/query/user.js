@@ -57,7 +57,7 @@ const findUserById = async (userId) => {
 const getUserDataById = async (userId) => {
   const data = await User.findOne({
     where: { id: userId, status: 1 },
-    attributes: ["name", "email", "phone", "logoImage", "colorScheme"],
+    attributes: ["id", "name", "email", "phone", "logoImage", "colorScheme"],
     include: {
       model: UserType,
       required: true,
@@ -73,6 +73,13 @@ const getUserDataById = async (userId) => {
 
   dataValues.type = type;
   delete dataValues.user_type;
+
+  if (dataValues.logoImage) {
+    const base64Image = dataValues.logoImage.toString("base64");
+    const dataUrl = `data:image/png;base64,${base64Image}`;
+
+    dataValues.logoImage = dataUrl;
+  }
 
   return dataValues;
 };

@@ -26,6 +26,9 @@ module.exports = (sequelize, DataTypes) => {
       type: "TIMESTAMP",
       allowNull: false,
     },
+    isAnonymous: {
+      type: DataTypes.BOOLEAN,
+    },
   });
 
   Calls.associate = (models) => {

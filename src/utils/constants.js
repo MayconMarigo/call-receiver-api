@@ -4,6 +4,10 @@ const TOTP = {
   AUTHENTICATOR_NAME: "call-receiver-api",
 };
 
+//URLS
+
+const BASE_DAILY_JS_URL = "https://api.daily.co/v1";
+
 //JWT
 const JWT_TOKEN_EXPIRY_TIME = 3600;
 
@@ -44,7 +48,7 @@ const ERROR_MESSAGES = {
       message: "Se o usuário existir, por favor verifique o email e senha.",
     },
     ALREADY_EXISTS: {
-      message: "Usuário já existe.",
+      message: "Usuário já existe na base de dados.",
       code: 422,
     },
   },
@@ -75,4 +79,5 @@ module.exports = {
   ACTIVE_USER_STATUS,
   ERROR_MESSAGES,
   USER_TYPES,
+  BASE_DAILY_JS_URL,
 };

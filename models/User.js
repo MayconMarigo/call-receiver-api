@@ -34,7 +34,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     logoImage: {
-      type: DataTypes.STRING,
+      type: DataTypes.BLOB('medium'),
     },
     colorScheme: {
       type: DataTypes.STRING,

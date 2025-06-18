@@ -22,4 +22,7 @@ const encryptDictionary = [
   { key: "rt", name: "rating" },
   { key: "uid", name: "userId" },
   { key: "sts", name: "status" },
+  { key: "cl", name: "color" },
+  { key: "fl", name: "logoImage" },
+  { key: "ia", name: "isAnonymous" },
 ];

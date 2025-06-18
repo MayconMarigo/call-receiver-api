@@ -19,13 +19,14 @@ const checkTransformedValues = (transformedValues) => {
   const values = Object.values(transformedValues);
   let error = false;
   values.forEach((value) => {
-    if (!value) {
+    if (!value && isNaN(value)) {
       return (error = true);
     }
   });
 
-  if (error)
+  if (error) {
     throw new Error(JSON.stringify(ERROR_MESSAGES.MALFORMATTED_FIELDS));
+  }
 
   return;
 };

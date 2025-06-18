@@ -41,28 +41,55 @@ exports.routesProvider = (app) => {
     }
   });
 
+  app.get("/api/v1/admin/users/get-all", isAdmin, async (req, res) => {
+    try {
+      const users = await adminService.getAllUsers();
+
+      res.status(200).send(users);
+    } catch (error) {
+      const { code, message } = extractCodeAndMessageFromError(error.message);
+      res.status(code).send({ message });
+    }
+  });
+
+  app.get("/api/v1/admin/calls/get-all", isAdmin, async (req, res) => {
+    try {
+      const { startDate, endDate } = req.query;
+
+      ValidationUtils.checkTransformedValues(req.query);
+
+      const calls = await adminService.getAllCalls(startDate, endDate);
+
+      res.status(200).send(calls);
+    } catch (error) {
+      const { code, message } = extractCodeAndMessageFromError(error.message);
+      res.status(code).send({ message });
+    }
+  });
+
   // ROTAS PUT
 
   app.put("/api/v1/admin/user/update", isAdmin, async (req, res) => {
     try {
+      console.log(req.body);
       const decodedBody = await CryptoUtils.retrieveValuesFromEncryptedBody(
         req.body
       );
 
+      console.log(decodedBody);
       ValidationUtils.checkRequiredValues(
-        ["userId", "name", "email", "phone", "password", "status"],
+        ["name", "email", "password", "status"],
         Object.keys(decodedBody)
       );
       ValidationUtils.checkTransformedValues(decodedBody);
 
-      await adminService.updateUserByUserId(decodedBody);
+      await adminService.updateUserByUserEmail(decodedBody);
 
       res.status(204).send();
     } catch (error) {
       const { code, message } = extractCodeAndMessageFromError(error.message);
-      const formattedErrorMessage = formatErrorFieldsMessageFromDatabase(error);
 
-      res.status(code).send(`${message} ${formattedErrorMessage}`);
+      res.status(code).send({ message });
     }
   });
 
@@ -138,15 +165,20 @@ exports.routesProvider = (app) => {
       );
 
       ValidationUtils.checkRequiredValues(
-        ["name", "email", "password", "phoneNumber", "userTypeId"],
+        ["name", "email", "password", "userTypeId"],
         Object.keys(decodedBody)
       );
       ValidationUtils.checkTransformedValues(decodedBody);
+
+      console.log(decodedBody);
 
       const created = await adminService.createUser(decodedBody);
       res.status(201).send({ created });
     } catch (error) {
       const { code, message } = extractCodeAndMessageFromError(error.message);
+
+      console.log(code);
+      console.log(message);
       res.status(code).send({ message });
     }
   });
@@ -202,7 +234,8 @@ exports.routesProvider = (app) => {
         connected,
         startTime,
         endTime,
-        decodedBody?.videoUrl ?? null
+        decodedBody?.videoUrl ?? null,
+        decodedBody?.isAnonymous ?? false
       );
 
       res.status(201).send({ created });
@@ -265,7 +298,6 @@ exports.routesProvider = (app) => {
   });
 
   app.post("/api/v1/user-data", isAuthenticated, async (req, res) => {
-    console.log(req.body)
     try {
       const decodedBody = await CryptoUtils.retrieveValuesFromEncryptedBody(
         req.body

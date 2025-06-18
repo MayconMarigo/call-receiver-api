@@ -7,7 +7,8 @@ const createCall = async (
   connected,
   startTime,
   endTime,
-  videoUrl
+  videoUrl,
+  isAnonymous
 ) => {
   const call = await callQueries.createCall(
     callId,
@@ -16,7 +17,8 @@ const createCall = async (
     connected,
     startTime,
     endTime,
-    videoUrl
+    videoUrl,
+    isAnonymous
   );
 
   return call;

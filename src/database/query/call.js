@@ -7,7 +7,8 @@ const createCall = async (
   connected,
   startTime,
   endTime,
-  videoUrl
+  videoUrl,
+  isAnonymous
 ) => {
   const [call, created] = await Call.findOrCreate({
     where: { callId },
@@ -19,6 +20,7 @@ const createCall = async (
       startTime,
       endTime,
       videoUrl,
+      isAnonymous,
     },
   });
 
