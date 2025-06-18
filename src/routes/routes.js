@@ -71,12 +71,9 @@ exports.routesProvider = (app) => {
 
   app.put("/api/v1/admin/user/update", isAdmin, async (req, res) => {
     try {
-      console.log(req.body);
       const decodedBody = await CryptoUtils.retrieveValuesFromEncryptedBody(
         req.body
       );
-
-      console.log(decodedBody);
       ValidationUtils.checkRequiredValues(
         ["name", "email", "password", "status"],
         Object.keys(decodedBody)
@@ -170,15 +167,10 @@ exports.routesProvider = (app) => {
       );
       ValidationUtils.checkTransformedValues(decodedBody);
 
-      console.log(decodedBody);
-
       const created = await adminService.createUser(decodedBody);
       res.status(201).send({ created });
     } catch (error) {
       const { code, message } = extractCodeAndMessageFromError(error.message);
-
-      console.log(code);
-      console.log(message);
       res.status(code).send({ message });
     }
   });

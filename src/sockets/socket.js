@@ -22,11 +22,11 @@ exports.socketProvider = function (io) {
     handleAddAgentToQueueByType(socket, agents);
 
     socket.on("callAvailableAgent", async (callback) => {
-      console.log("callAvailableAgent");
+      // console.log("callAvailableAgent");
       const agentsArray = filterAvailableAgents(agents);
       const agentToCall = agentsArray[0];
       const companyId = socket.id;
-      console.log("Company ligando", companyId);
+      // console.log("Company ligando", companyId);
 
       if (agentsArray.length == 0) {
         return socket.emit("noAgentsAvailable", {
@@ -34,7 +34,7 @@ exports.socketProvider = function (io) {
         });
       }
 
-      console.log("Ligando para o agente", agentToCall);
+      // console.log("Ligando para o agente", agentToCall);
       agents = modifyAgentStatusByType(agents, agentToCall.id, "busy");
 
       const agentUserName = agentToCall.user.name;
@@ -42,9 +42,9 @@ exports.socketProvider = function (io) {
       const companyUserName = company.user.name;
       const randomRoomName = crypto.randomUUID();
 
-      console.log("agentUserName", agentUserName);
-      console.log("companyUserName", companyUserName);
-      console.log("randomRoomName", randomRoomName);
+      // console.log("agentUserName", agentUserName);
+      // console.log("companyUserName", companyUserName);
+      // console.log("randomRoomName", randomRoomName);
 
       // socket.to(companyId).emit("noAgentsAvailable", {
       //     message: "Não há agentes disponíveis.",
@@ -56,11 +56,11 @@ exports.socketProvider = function (io) {
         true
       );
 
-      console.log("companyToken", companyToken);
+      // console.log("companyToken", companyToken);
 
       const room = await generateAdminRoomName(randomRoomName, companyToken);
 
-      console.log("room", room);
+      // console.log("room", room);
 
       const token = await generateTokenByRoomName(
         randomRoomName,
@@ -116,16 +116,16 @@ exports.socketProvider = function (io) {
     });
 
     socket.on("handleCallNextAgentAfterFailedCall", (message) => {
-      console.log("handleCallNextAgentAfterFailedCall");
+      // console.log("handleCallNextAgentAfterFailedCall");
       const agentIdThatNotAnswered = message.agentId;
       agents = removeAgentFromQueue(agentIdThatNotAnswered, agents);
       const agentsArray = filterAvailableAgents(agents);
       const agentToCall = agentsArray[0];
       const companyId = message.companyId;
-      console.log("agentIdThatNotAnswered", agentIdThatNotAnswered);
-      console.log("agentToCall", agentToCall);
-      console.log("Company ligando", companyId);
-      console.log(
+      // console.log("agentIdThatNotAnswered", agentIdThatNotAnswered);
+      // console.log("agentToCall", agentToCall);
+      // console.log("Company ligando", companyId);
+      // console.log(
         "condition",
         agentsArray.length == 0 || agentToCall.id == agentIdThatNotAnswered
       );
@@ -136,7 +136,7 @@ exports.socketProvider = function (io) {
         });
       }
 
-      console.log("Ligando para o agente", agentToCall);
+      // console.log("Ligando para o agente", agentToCall);
 
       agents = modifyAgentStatusByType(agents, agentToCall.id, "busy");
 
@@ -175,34 +175,34 @@ exports.socketProvider = function (io) {
     });
 
     socket.on("incomingCallResponse", (message) => {
-      console.log("incomingCallResponse");
+      // console.log("incomingCallResponse");
       const { companyId, status } = message;
       handleSendRoomIdToSocket(socket, companyId, status);
     });
 
     socket.on("handleChangeAgentStatusToBusy", (message) => {
-      console.log("handleChangeAgentStatusToBusy");
+      // console.log("handleChangeAgentStatusToBusy");
       const { id: agentToModify } = message;
       agents = modifyAgentStatusByType(agents, agentToModify, "busy");
     });
 
     socket.on("handleChangeAgentStatusToAvailable", (message) => {
-      console.log("handleChangeAgentStatusToAvailable");
+      // console.log("handleChangeAgentStatusToAvailable");
       const { id: agentToModify } = message;
       agents = modifyAgentStatusByType(agents, agentToModify, "available");
     });
 
     socket.on("getAvailableAgents", (callback) => {
-      console.log("ALL AGENTS", agents);
+      // console.log("ALL AGENTS", agents);
       const availableAgents = filterAvailableAgents(agents);
-      console.log("available agents", availableAgents);
+      // console.log("available agents", availableAgents);
 
       return callback(availableAgents);
     });
 
     socket.on("disconnect", () => {
       const userType = socket.handshake.headers.type;
-      console.log(`${userType} desconectado:`, socket.id);
+      // console.log(`${userType} desconectado:`, socket.id);
       agents = agents.filter((agent) => agent.id !== socket.id);
     });
   });

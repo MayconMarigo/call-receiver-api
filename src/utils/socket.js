@@ -48,15 +48,12 @@ const handleAddAgentToQueueByType = (agent, agentQueue) => {
   };
 
   if (isAgent) {
-    console.log("Agente Conectado", agent.id);
-    // console.log(pushObject);
-
+    // console.log("Agente Conectado", agent.id);
     agentQueue.push(pushObject);
 
     return;
   }
-  // console.log(pushObject);
-  console.log("Company Conectado", agent.id);
+  // console.log("Company Conectado", agent.id);
   agentQueue.push(pushObject);
 };
 

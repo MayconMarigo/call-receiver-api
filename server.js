@@ -10,7 +10,6 @@ const morgan = require("morgan");
 
 const expressPort = 8080;
 const socketPort = 8081;
-const LOCAL_IP = "192.168.0.30";
 
 const app = express();
 const server = createServer(app);
@@ -31,7 +30,7 @@ socketProvider(io);
 routesProvider(app);
 
 app.listen(expressPort, LOCAL_IP, () => {
-  console.log(`Server listening on http://${LOCAL_IP}:${expressPort}`);
+  console.log(`Server listening on port ${expressPort}`);
 });
 
 server.listen(socketPort, () => {
