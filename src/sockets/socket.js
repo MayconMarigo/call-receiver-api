@@ -46,10 +46,6 @@ exports.socketProvider = function (io) {
       console.log("companyUserName", companyUserName);
       console.log("randomRoomName", randomRoomName);
 
-      // socket.to(companyId).emit("noAgentsAvailable", {
-      //     message: "Não há agentes disponíveis.",
-      //   });
-
       const companyToken = await generateTokenByRoomName(
         randomRoomName,
         companyUserName,

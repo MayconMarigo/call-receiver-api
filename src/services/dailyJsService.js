@@ -19,7 +19,7 @@ exports.generateTokenByRoomName = async (
     body: JSON.stringify({
       properties: {
         exp: new Date().getTime() + 3600 * 1000,
-        room_name: roomName || "teste",
+        room_name: roomName || crypto.randomUUID(),
         user_name: userName,
         is_owner: isAdmin,
       },
