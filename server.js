@@ -18,7 +18,12 @@ const io = new Server(server, {
 });
 
 let corsOptions = {
-  origin: ["http://localhost:3000", "http://192.168.0.30:3000"],
+  origin: [
+    "http://localhost:3000",
+    "http://192.168.0.30:3000",
+    "http://saude.nr1pro.com.br",
+    "http://saude.nr1pro.com.br:3000",
+  ],
 };
 
 app.use(cors(corsOptions));
@@ -29,7 +34,7 @@ app.use(morgan("dev"));
 socketProvider(io);
 routesProvider(app);
 
-app.listen(expressPort, LOCAL_IP, () => {
+app.listen(expressPort, () => {
   console.log(`Server listening on port ${expressPort}`);
 });
 

@@ -38,7 +38,15 @@ const modifyAgentStatusByType = (agents, agentIdToModify, status) =>
 
 const handleAddAgentToQueueByType = (agent, agentQueue) => {
   const isAgent = agent.handshake.headers.type === "agent";
-  const user = JSON.parse(agent.handshake.headers.user);
+
+  let user;
+
+  try {
+    JSON.parse(agent?.handshake?.headers?.user);
+    user = user;
+  } catch (error) {
+    return (user = { name: "Anônimo", id: null });
+  }
 
   const pushObject = {
     id: agent.id,
@@ -48,12 +56,12 @@ const handleAddAgentToQueueByType = (agent, agentQueue) => {
   };
 
   if (isAgent) {
-    // console.log("Agente Conectado", agent.id);
+    console.log("Agente Conectado", agent.id);
     agentQueue.push(pushObject);
 
     return;
   }
-  // console.log("Company Conectado", agent.id);
+  console.log("Company Conectado", agent.id);
   agentQueue.push(pushObject);
 };
 
