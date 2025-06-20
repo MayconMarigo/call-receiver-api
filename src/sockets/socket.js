@@ -57,12 +57,12 @@ exports.socketProvider = function (io) {
       const room = await generateAdminRoomName(randomRoomName, companyToken);
 
       console.log("room", room);
-      
+
       const token = await generateTokenByRoomName(
         randomRoomName,
         agentUserName
       );
-      
+
       console.log("agentToken", token);
       handleCallAgentBySocketId(
         socket,
@@ -101,7 +101,7 @@ exports.socketProvider = function (io) {
         isAnonymous
       );
 
-      const agent = JSON.parse(socket.handshake.headers.user);
+      const agent = JSON.parse(socket.handshake.query.user);
       addAgentToEndOfQueueAndChangeStatus(
         {
           id: receiverId,
@@ -198,7 +198,7 @@ exports.socketProvider = function (io) {
     });
 
     socket.on("disconnect", () => {
-      const userType = socket.handshake.headers.type;
+      const userType = socket.handshake.query.type;
       console.log(`${userType} desconectado:`, socket.id);
       agents = agents.filter((agent) => agent.id !== socket.id);
     });

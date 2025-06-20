@@ -37,11 +37,12 @@ const modifyAgentStatusByType = (agents, agentIdToModify, status) =>
   });
 
 const handleAddAgentToQueueByType = async (agent, agentQueue) => {
-  const isAgent = agent.handshake.headers.type === "agent";
+  const isAgent = agent.handshake.query.type === "agent";
+  console.log(agent.handshake.query);
   let user;
 
   try {
-    const parsed = JSON.parse(agent?.handshake?.headers?.user);
+    const parsed = JSON.parse(agent?.handshake?.query?.user);
     user = parsed;
   } catch (error) {
     return (user = { name: "Anônimo", id: null });
