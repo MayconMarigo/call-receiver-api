@@ -57,12 +57,13 @@ exports.socketProvider = function (io) {
       const room = await generateAdminRoomName(randomRoomName, companyToken);
 
       console.log("room", room);
-
+      
       const token = await generateTokenByRoomName(
         randomRoomName,
         agentUserName
       );
-
+      
+      console.log("agentToken", token);
       handleCallAgentBySocketId(
         socket,
         agentToCall.id,

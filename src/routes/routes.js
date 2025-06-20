@@ -15,7 +15,7 @@ const { ValidationUtils } = require("../utils/validations");
 
 exports.routesProvider = (app) => {
   // Rotas GET
-  app.get("/api/v1/admin/reports/:userId", isAdmin, async (req, res) => {
+  app.get("/api/admin/reports/:userId", isAdmin, async (req, res) => {
     try {
       ValidationUtils.checkRequiredValues(
         ["userId", "startDate", "endDate", "type"],
@@ -41,7 +41,7 @@ exports.routesProvider = (app) => {
     }
   });
 
-  app.get("/api/v1/admin/users/get-all", isAdmin, async (req, res) => {
+  app.get("/api/admin/users/get-all", isAdmin, async (req, res) => {
     try {
       const users = await adminService.getAllUsers();
 
@@ -52,7 +52,7 @@ exports.routesProvider = (app) => {
     }
   });
 
-  app.get("/api/v1/admin/calls/get-all", isAdmin, async (req, res) => {
+  app.get("/api/admin/calls/get-all", isAdmin, async (req, res) => {
     try {
       const { startDate, endDate } = req.query;
 
@@ -69,7 +69,7 @@ exports.routesProvider = (app) => {
 
   // ROTAS PUT
 
-  app.put("/api/v1/admin/user/update", isAdmin, async (req, res) => {
+  app.put("/api/admin/user/update", isAdmin, async (req, res) => {
     try {
       const decodedBody = await CryptoUtils.retrieveValuesFromEncryptedBody(
         req.body
@@ -92,7 +92,7 @@ exports.routesProvider = (app) => {
 
   // Rotas POST
 
-  app.post("/api/v1/verify-token", async (req, res) => {
+  app.post("/api/verify-token", async (req, res) => {
     try {
       const decodedBody = await CryptoUtils.retrieveValuesFromEncryptedBody(
         req.body
@@ -117,7 +117,7 @@ exports.routesProvider = (app) => {
     }
   });
 
-  app.post("/api/v1/teste2", async (req, res) => {
+  app.post("/api/teste2", async (req, res) => {
     const data = {
       uid: CryptoUtils.encryptWithCypher(
         "7f7418be-6ce1-49ab-8caf-e0096b9a04b6"
@@ -132,7 +132,7 @@ exports.routesProvider = (app) => {
     res.status(200).send(data);
   });
 
-  app.post("/api/v1/admin/reports", isAdmin, async (req, res) => {
+  app.post("/api/admin/reports", isAdmin, async (req, res) => {
     try {
       const decodedBody = await CryptoUtils.retrieveValuesFromEncryptedBody(
         req.body
@@ -155,7 +155,7 @@ exports.routesProvider = (app) => {
     }
   });
 
-  app.post("/api/v1/admin/user/create", isAdmin, async (req, res) => {
+  app.post("/api/admin/user/create", isAdmin, async (req, res) => {
     try {
       const decodedBody = await CryptoUtils.retrieveValuesFromEncryptedBody(
         req.body
@@ -175,7 +175,7 @@ exports.routesProvider = (app) => {
     }
   });
 
-  app.post("/api/v1/rating/create", isAuthenticated, async (req, res) => {
+  app.post("/api/rating/create", isAuthenticated, async (req, res) => {
     try {
       const decodedBody = await CryptoUtils.retrieveValuesFromEncryptedBody(
         req.body
@@ -198,7 +198,7 @@ exports.routesProvider = (app) => {
     }
   });
 
-  app.post("/api/v1/call/create", isAuthenticated, async (req, res) => {
+  app.post("/api/call/create", isAuthenticated, async (req, res) => {
     try {
       const decodedBody = await CryptoUtils.retrieveValuesFromEncryptedBody(
         req.body
@@ -237,7 +237,7 @@ exports.routesProvider = (app) => {
     }
   });
 
-  app.post("/api/v1/auth", async (req, res) => {
+  app.post("/api/auth", async (req, res) => {
     try {
       const decodedBody = await CryptoUtils.retrieveValuesFromEncryptedBody(
         req.body
@@ -264,7 +264,7 @@ exports.routesProvider = (app) => {
     }
   });
 
-  app.post("/api/v1/login", async (req, res) => {
+  app.post("/api/login", async (req, res) => {
     try {
       const decodedBody = await CryptoUtils.retrieveValuesFromEncryptedBody(
         req.body
@@ -289,7 +289,7 @@ exports.routesProvider = (app) => {
     }
   });
 
-  app.post("/api/v1/user-data", isAuthenticated, async (req, res) => {
+  app.post("/api/user-data", isAuthenticated, async (req, res) => {
     try {
       const decodedBody = await CryptoUtils.retrieveValuesFromEncryptedBody(
         req.body
@@ -311,7 +311,7 @@ exports.routesProvider = (app) => {
     }
   });
 
-  app.post("/api/v1/verify-2fa", isAuthenticated, async (req, res) => {
+  app.post("/api/verify-2fa", isAuthenticated, async (req, res) => {
     try {
       const decodedBody = await CryptoUtils.retrieveValuesFromEncryptedBody(
         req.body
@@ -335,7 +335,7 @@ exports.routesProvider = (app) => {
     }
   });
 
-  app.post("/api/v1/agenda/create", isAuthenticated, async (req, res) => {
+  app.post("/api/agenda/create", isAuthenticated, async (req, res) => {
     try {
       const decodedBody = await CryptoUtils.retrieveValuesFromEncryptedBody(
         req.body
@@ -364,7 +364,7 @@ exports.routesProvider = (app) => {
     }
   });
 
-  app.post("/api/v1/agenda/:userId", isAuthenticated, async (req, res) => {
+  app.post("/api/agenda/:userId", isAuthenticated, async (req, res) => {
     try {
       const { startDate, endDate } = req.query;
       const { userId } = req.params;
