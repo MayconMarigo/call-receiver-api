@@ -112,7 +112,7 @@ exports.routesProvider = (app) => {
       if (user01Info.user_id == null) {
         user01 = "2";
       } else {
-        user01 = userQueries.findUserTypeById(user01Info.userId);
+        user01 = await userQueries.findUserTypeById(user01Info.userId);
       }
       console.log("user01", user01);
 
@@ -120,7 +120,7 @@ exports.routesProvider = (app) => {
       if (user02Info.user_id == null) {
         user02 = "2";
       } else {
-        user02 = userQueries.findUserTypeById(user02Info.userId);
+        user02 = await  userQueries.findUserTypeById(user02Info.userId);
       }
       console.log("user02", user02);
 
