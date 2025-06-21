@@ -38,7 +38,7 @@ const modifyAgentStatusByType = (agents, agentIdToModify, status) =>
 
 const handleAddAgentToQueueByType = async (agent, agentQueue) => {
   const isAgent = agent.handshake.query.type === "agent";
-  console.log(agent.handshake.query);
+  // console.log(agent.handshake.query);
   let user;
 
   try {
@@ -56,12 +56,12 @@ const handleAddAgentToQueueByType = async (agent, agentQueue) => {
   };
 
   if (isAgent) {
-    console.log("Agente Conectado", agent.id);
+    // console.log("Agente Conectado", agent.id);
     agentQueue.push(pushObject);
 
     return;
   }
-  console.log("Company Conectado", agent.id);
+  // console.log("Company Conectado", agent.id);
   agentQueue.push(pushObject);
 };
 
