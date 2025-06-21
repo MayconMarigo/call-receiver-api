@@ -114,6 +114,7 @@ exports.routesProvider = (app) => {
       } else {
         user01 = userQueries.findUserTypeById(user01Info.userId);
       }
+      console.log("user01", user01);
 
       let user02;
       if (user02Info.user_id == null) {
@@ -121,16 +122,24 @@ exports.routesProvider = (app) => {
       } else {
         user02 = userQueries.findUserTypeById(user02Info.userId);
       }
+      console.log("user02", user02);
 
       const callerId = user01 == "2" ? user01Info.user_id : user02Info.user_id;
+      console.log("callerId", callerId);
       const receiverId =
-        user02 == "3" ? user02Info.user_id : user01Info.user_id;
+        user01 == "3" ? user01Info.user_id : user02Info.user_id;
+      console.log("receiverId", receiverId);
 
       const getInitialTime = (userJoinTime) => new Date(userJoinTime * 1000);
       const getFinalTime = (userJoinTime, duration) =>
         new Date(userJoinTime * 1000 + duration * 1000);
 
-      const isAnonymous = user01Info.user_id === null || user02Info.user_id;
+      const isAnonymous =
+        user01Info.user_id === null || user02Info.user_id === null;
+      console.log("isAnonymous", isAnonymous);
+
+      console.log(getInitialTime(user01Info.join_time));
+      console.log(getFinalTime(user01Info.join_time, user01Info.duration));
 
       await adminService.createCall(
         room,
