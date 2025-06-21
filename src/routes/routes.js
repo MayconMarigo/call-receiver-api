@@ -1,8 +1,10 @@
+const { userQueries } = require("../database/query/user");
 const { isAdmin } = require("../middlewares/admin");
 const { isAuthenticated } = require("../middlewares/authenticated");
 const { adminService } = require("../services/adminService");
 const { agendaService } = require("../services/agendaService");
 const { CallService } = require("../services/callService");
+const { generateMeetingInformation } = require("../services/dailyJsService");
 const { RatingService } = require("../services/ratingService");
 const { TokenService } = require("../services/tokenService");
 const { UserService } = require("../services/userService");
@@ -94,8 +96,57 @@ exports.routesProvider = (app) => {
 
   app.post("/api/call/end", async (req, res) => {
     console.log(req.body);
+    const { meeting_id, room } = req.body.payload;
 
-    return res.status(200).send({ ok: true });
+    if (!meeting_id) return res.status(404).send({ ok: false });
+
+    try {
+      const meetingInfo = await generateMeetingInformation(meeting_id);
+
+      console.log(meetingInfo);
+
+      const user01Info = meetingInfo.data[0];
+      const user02Info = meetingInfo.data[1];
+
+      let user01;
+      if (user01Info.user_id == null) {
+        user01 = "2";
+      } else {
+        user01 = userQueries.findUserTypeById(user01Info.userId);
+      }
+
+      let user02;
+      if (user02Info.user_id == null) {
+        user02 = "2";
+      } else {
+        user02 = userQueries.findUserTypeById(user02Info.userId);
+      }
+
+      const callerId = user01 == "2" ? user01Info.user_id : user02Info.user_id;
+      const receiverId =
+        user02 == "3" ? user02Info.user_id : user01Info.user_id;
+
+      const getInitialTime = (userJoinTime) => new Date(userJoinTime * 1000);
+      const getFinalTime = (userJoinTime, duration) =>
+        new Date(userJoinTime * 1000 + duration * 1000);
+
+      const isAnonymous = user01Info.user_id === null || user02Info.user_id;
+
+      await adminService.createCall(
+        room,
+        callerId,
+        receiverId,
+        1,
+        getInitialTime(user01Info.join_time),
+        getFinalTime(user01Info.join_time, user01Info.duration),
+        null,
+        isAnonymous
+      );
+
+      return res.status(200).send({ ok: true });
+    } catch (error) {
+      res.status(400).send({ message: "Error." });
+    }
   });
 
   app.post("/api/verify-token", async (req, res) => {

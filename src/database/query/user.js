@@ -84,9 +84,23 @@ const getUserDataById = async (userId) => {
   return dataValues;
 };
 
+const findUserTypeById = async (userId) => {
+  const data = await User.findOne({
+    where: { id: userId, status: 1 },
+    attributes: ["userTypeId"],
+  });
+
+  if (!data) return null;
+
+  const { userTypeId } = data?.dataValues;
+
+  return userTypeId;
+};
+
 exports.userQueries = {
   findAdminUserByEmail,
   findUserByEmailAndPassword,
   findUserById,
   getUserDataById,
+  findUserTypeById
 };

@@ -37,18 +37,18 @@ exports.socketProvider = function (io) {
       console.log("Ligando para o agente", agentToCall);
       agents = modifyAgentStatusByType(agents, agentToCall.id, "busy");
 
-      const agentUserName = agentToCall.user.name;
+      const agentUser = agentToCall.user;
       const company = findCompanyCaller(agents, socket.id);
-      const companyUserName = company.user.name;
+      const companyUser = company.user;
       const randomRoomName = crypto.randomUUID();
 
-      console.log("agentUserName", agentUserName);
-      console.log("companyUserName", companyUserName);
+      console.log("agentUserName", agentUser);
+      console.log("companyUserName", companyUser);
       console.log("randomRoomName", randomRoomName);
 
       const companyToken = await generateTokenByRoomName(
         randomRoomName,
-        companyUserName,
+        companyUser,
         true
       );
 
@@ -60,7 +60,7 @@ exports.socketProvider = function (io) {
 
       const token = await generateTokenByRoomName(
         randomRoomName,
-        agentUserName
+        agentUser
       );
 
       console.log("agentToken", token);

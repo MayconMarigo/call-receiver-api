@@ -41,10 +41,17 @@ const verifyTwoFactorAuthenticationCode = async (base32_secret, token) => {
   return;
 };
 
+const findUserTypeById = async (userId) => {
+  const user = await userQueries.findUserTypeById(userId);
+
+  return user;
+};
+
 exports.UserService = {
   getUserDataByToken,
   getUserByEmailAndPassword,
   generateOTPAuthUrl,
   generateTotpQrCode,
   verifyTwoFactorAuthenticationCode,
+  findUserTypeById
 };
