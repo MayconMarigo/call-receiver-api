@@ -103,7 +103,7 @@ exports.routesProvider = (app) => {
     try {
       const meetingInfo = await generateMeetingInformation(meeting_id);
 
-      console.log(meetingInfo);
+      console.log("meetingInfo", meetingInfo);
 
       const user01Info = meetingInfo.data[0];
       const user02Info = meetingInfo.data[1];
@@ -112,7 +112,7 @@ exports.routesProvider = (app) => {
       if (user01Info.user_id == null) {
         user01 = "2";
       } else {
-        user01 = await userQueries.findUserTypeById(user01Info.userId);
+        user01 = "3";
       }
       console.log("user01", user01);
 
@@ -120,7 +120,7 @@ exports.routesProvider = (app) => {
       if (user02Info.user_id == null) {
         user02 = "2";
       } else {
-        user02 = await  userQueries.findUserTypeById(user02Info.userId);
+        user02 = "3";
       }
       console.log("user02", user02);
 
@@ -138,10 +138,7 @@ exports.routesProvider = (app) => {
         user01Info.user_id === null || user02Info.user_id === null;
       console.log("isAnonymous", isAnonymous);
 
-      console.log(getInitialTime(user01Info.join_time));
-      console.log(getFinalTime(user01Info.join_time, user01Info.duration));
-
-      await adminService.createCall(
+      await CallService.createCall(
         room,
         callerId,
         receiverId,
