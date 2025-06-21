@@ -95,7 +95,7 @@ exports.routesProvider = (app) => {
   // Rotas POST
 
   app.post("/api/call/end", async (req, res) => {
-    console.log(req.body);
+    if (req.body.test) return res.status(200).send();
     const { meeting_id, room } = req.body.payload;
 
     if (!meeting_id) return res.status(404).send({ ok: false });
