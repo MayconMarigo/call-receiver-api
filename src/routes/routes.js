@@ -92,6 +92,12 @@ exports.routesProvider = (app) => {
 
   // Rotas POST
 
+  app.post("/api/call/end", async (req, res) => {
+    console.log(req.body);
+
+    return res.status(200).send({ ok: true });
+  });
+
   app.post("/api/verify-token", async (req, res) => {
     try {
       const decodedBody = await CryptoUtils.retrieveValuesFromEncryptedBody(
