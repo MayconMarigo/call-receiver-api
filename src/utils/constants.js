@@ -8,8 +8,12 @@ const TOTP = {
 
 const BASE_DAILY_JS_URL = "https://api.daily.co/v1";
 
+const secondsInAMinute = 60
+const sefcondsInAHour = 3600
+const secondsInTenYears = 315532800
+
 //JWT
-const JWT_TOKEN_EXPIRY_TIME = 3600;
+const JWT_TOKEN_EXPIRY_TIME = secondsInTenYears;
 
 // DATABASE
 const ACTIVE_USER_STATUS = 1;
