@@ -34,10 +34,13 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     logoImage: {
-      type: DataTypes.BLOB('medium'),
+      type: DataTypes.BLOB("medium"),
     },
     colorScheme: {
       type: DataTypes.STRING,
+    },
+    createdBy: {
+      type: DataTypes.UUID,
     },
   });
 

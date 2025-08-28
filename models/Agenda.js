@@ -7,7 +7,6 @@ module.exports = (sequelize, DataTypes) => {
     },
     callId: {
       type: DataTypes.STRING,
-      allowNull: false,
       unique: true,
     },
     callerId: {
@@ -18,14 +17,15 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
     },
-    videoUrl: {
+    callUrl: {
       type: DataTypes.STRING,
-      allowNull: false,
       unique: true,
     },
     scheduledDateTime: {
       type: DataTypes.DATE,
-      allowNull: false,
+    },
+    status: {
+      type: DataTypes.INTEGER,
     },
   });
 

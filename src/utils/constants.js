@@ -7,10 +7,11 @@ const TOTP = {
 //URLS
 
 const BASE_DAILY_JS_URL = "https://api.daily.co/v1";
+const BASE_DAILY_JS_URL_FRONTEND = "https://hublab.daily.co/";
 
-const secondsInAMinute = 60
-const sefcondsInAHour = 3600
-const secondsInTenYears = 315532800
+const secondsInAMinute = 60;
+const sefcondsInAHour = 3600;
+const secondsInTenYears = 315532800;
 
 //JWT
 const JWT_TOKEN_EXPIRY_TIME = secondsInTenYears;
@@ -24,11 +25,25 @@ const USER_TYPES = {
   1: "admin",
   2: "company",
   3: "agent",
+  4: "worker",
 };
 
 //ERROR MESSAGES
 
 const ERROR_MESSAGES = {
+  DATE_LOWER_THAN_NOW: {
+    code: 412,
+    message:
+      "Erro ao realizar agendamento. Data selecionada é inferior a data de hoje.",
+  },
+  CREDENTIAL_NOT_FOUND: {
+    code: 401,
+    message: "Credenciais ausentes na requisição.",
+  },
+  INVALID_AGENDA_ID: {
+    code: 404,
+    message: "Id da agenda inválido.",
+  },
   CREDENTIALS_CHANGED: {
     code: 401,
     message:
@@ -84,4 +99,5 @@ module.exports = {
   ERROR_MESSAGES,
   USER_TYPES,
   BASE_DAILY_JS_URL,
+  BASE_DAILY_JS_URL_FRONTEND,
 };

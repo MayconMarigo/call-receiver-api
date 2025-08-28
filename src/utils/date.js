@@ -3,8 +3,8 @@ const substractDaysFromNewDate = (days = 0) =>
     .toISOString()
     .split("T")[0];
 
-const addDaysFromNewDate = (days = 0) =>
-  new Date(new Date().setDate(new Date().getDate() + days))
+const addDaysFromNewDate = (days = 0, newDate = new Date()) =>
+  new Date(newDate.setDate(newDate.getDate() + days))
     .toISOString()
     .split("T")[0];
 

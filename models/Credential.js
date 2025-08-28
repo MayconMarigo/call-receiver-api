@@ -6,6 +6,9 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       primaryKey: true,
     },
+    status: {
+      type: DataTypes.INTEGER,
+    },
   });
 
   Credential.associate = (models) => {

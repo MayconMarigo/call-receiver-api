@@ -28,7 +28,29 @@ const findAgendaByUserId = async (userId, startDate, endDate) => {
   return agenda;
 };
 
+const insertAgendaByDate = async (userId, timeRange, date, multiple) => {
+  const data = await agendaQueries.insertAgendaByDate(
+    userId,
+    timeRange,
+    date,
+    multiple
+  );
+
+  return data;
+};
+
+const associateUserAgendaToCompany = async (agendaId, companyId) => {
+  const updated = await agendaQueries.associateUserAgendaToCompany(
+    agendaId,
+    companyId
+  );
+
+  return updated;
+};
+
 exports.agendaService = {
   createAgenda,
   findAgendaByUserId,
+  insertAgendaByDate,
+  associateUserAgendaToCompany,
 };

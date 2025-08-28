@@ -23,7 +23,7 @@ const retrieveValuesFromEncryptedBody = async (body) => {
   );
 
   let base64Data;
-  let buffer;
+  let buffer = null;
 
   if (body.fl) {
     base64Data = body.fl.replace(/^data:image\/\w+;base64,/, "");

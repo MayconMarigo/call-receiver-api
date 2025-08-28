@@ -28,7 +28,9 @@ exports.generateTokenByRoomName = async (roomName, user, isAdmin = false) => {
   return token;
 };
 
-exports.generateAdminRoomName = async (roomName) => {
+exports.generateAdminRoomName = async (roomName, expiry) => {
+  const time = new Date(expiry).getTime() / 1000 + 3600;
+  // console.log(time)
   const request = await fetch(`${BASE_DAILY_JS_URL}/rooms`, {
     method: "POST",
     headers: {
@@ -37,14 +39,13 @@ exports.generateAdminRoomName = async (roomName) => {
     },
     body: JSON.stringify({
       name: roomName,
-      privacy: "private",
       properties: {
         eject_at_room_exp: true,
         enable_prejoin_ui: false,
         lang: "pt-BR",
         enable_chat: true,
         max_participants: 2,
-        exp: Math.floor(Date.now() / 1000) + 3600,
+        exp: time,
       },
     }),
   });

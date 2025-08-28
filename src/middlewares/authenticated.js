@@ -24,7 +24,6 @@ const isAuthenticated = async (req, res, next) => {
 
     if (!arePasswordsEqual)
       throw new Error(JSON.stringify(ERROR_MESSAGES.UNAUTHORIZED));
-
     next();
   } catch (error) {
     const { code, message } = extractCodeAndMessageFromError(error.message);

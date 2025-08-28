@@ -44,10 +44,35 @@ const getAllUsers = async () => {
   return users;
 };
 
+const getAllUsersNameAndId = async () => {
+  const users = await adminQueries.getAllUsersNameAndId();
+
+  return users;
+};
+
+const getDashboardInfo = async () => {
+  const info = await adminQueries.getDashboardInfo();
+
+  return info;
+};
+
+const getAgendaByDateRange = async (startDate, endDate, userId) => {
+  const agenda = await adminQueries.getAgendaByDateRange(
+    startDate,
+    endDate,
+    userId
+  );
+
+  return agenda;
+};
+
 exports.adminService = {
   createUser,
   updateUserByUserEmail,
   getAllCalls,
   findAllCallsByUserIdAndType,
   getAllUsers,
+  getDashboardInfo,
+  getAgendaByDateRange,
+  getAllUsersNameAndId
 };
